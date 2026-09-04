@@ -1,9 +1,9 @@
-import { useState } from "react";
-// TODO: import your components once you build them
-// import RecipeForm from "./components/RecipeForm";
-// import CategoryFilter from "./components/CategoryFilter";
-// import RecipeList from "./components/RecipeList";
-// import SummaryBar from "./components/SummaryBar";
+import { useEffect, useState } from "react";
+//TODO: import your components once you build them
+import RecipeForm from "./components/RecipeForm";
+import CategoryFilter from "./components/CategoryFilter";
+import RecipeList from "./components/RecipeList";
+import SummaryBar from "./components/SummaryBar";
 
 const STARTER_RECIPES = [
   { id: 1, title: "Chicken Adobo", category: "Dinner", time: 45, favorite: false },
@@ -17,26 +17,51 @@ const STARTER_RECIPES = [
 export default function App() {
   // TODO 1: create the `recipes` state using STARTER_RECIPES as the initial value.
   //         Later, wrap it in the lazy initializer that reads from localStorage.
+  const [recipes, setRecipes] = useState (() => {
+    const saved = localStorage.getItem("recipes");
+
+    return saved ? JSON.parse(saved) : recipesData;
+  });
+
   const [recipes, setRecipes] = useState(STARTER_RECIPES);
 
   // TODO 2: create the `filter` state, starting as "All".
   //         Later, wrap it in the lazy initializer that reads from localStorage.
-
+  const [Filter, setFilter] = useState(() => {
+    return localStorage.getItem("filter") || "all";
+  });
   // TODO 3: add useEffect to persist `recipes` to localStorage whenever it changes.
-
+  useEffect(() => {
+    localStorage.setItem("recipes", JSON.stringify(recipes));
+  });
   // TODO 4: add useEffect to persist `filter` to localStorage whenever it changes.
-
+  useEffect(() => {
+    localStorage.setItem("filter", filter);
+  }, [filter]);
   // TODO 5: add useEffect to update `document.title` with the favorite count.
   //         Example format: `Recipes · 3 ★`
+
 
   // TODO 6: write handleAdd(recipe) — adds a new recipe with a unique id (Date.now()).
   //         Use the spread operator, NOT .push().
 
   // TODO 7: write handleToggleFavorite(id) — flips the `favorite` field of the matching recipe.
   //         Use .map() and spread; do NOT mutate the object directly.
+  const handleToggleFavorite = (id) => {
+    setRecipes(
+      recipes.id === id
+      ? {...recipes,favorite: !recipes.favorite}
+      :recipes 
+    );
+  };
 
   // TODO 8: write handleDelete(id) — removes the recipe with that id.
   //         Use .filter().
+  const handleDelete = (id) => {
+    setRecipes(
+      recipes.filter((recipes) => recipes.id !== id)
+    );
+  };
 
   // TODO 9: derive `visibleRecipes` in render — if filter === "All" show all,
   //         otherwise filter by category. Do NOT store this in state.
